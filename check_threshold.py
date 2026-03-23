@@ -1,13 +1,19 @@
 # check_threshold.py
 import mlflow
 import sys
+import os
 
-mlflow.set_tracking_uri("file:///C:/Users/Rihana Nasr/Desktop/MLOPS-A5/mlruns")
+# Use relative mlruns folder
+mlflow.set_tracking_uri("mlruns")  # relative path in repo
 
+# Read the Run ID from the uploaded artifact
 with open("model_info.txt", "r") as f:
     run_id = f.read().strip()
 
-run = mlflow.get_run(run_id)
+# Use MlflowClient to get run info
+client = mlflow.tracking.MlflowClient()
+run = client.get_run(run_id)
+
 accuracy = run.data.metrics.get("accuracy")
 
 if accuracy is None:
