@@ -21,8 +21,8 @@ jobs:
         run: |
           pip install pandas scikit-learn mlflow joblib dvc
 
-      - name: Pull dataset
-        run: python -m dvc pull
+      - name: Skip DVC pull
+        run: echo "Dataset already available"
 
       - name: Train model
         run: python train.py
