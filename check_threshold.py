@@ -1,3 +1,4 @@
+import os
 import mlflow
 import sys
 
@@ -5,8 +6,9 @@ import sys
 with open("model_info.txt") as f:
     run_id = f.read().strip()
 
-# Set your MLflow Tracking URI (could use an env variable or secret in GH Actions)
-mlflow.set_tracking_uri("http://127.0.0.1:5000")  # replace with your MLflow URI or secret
+# Set your MLflow Tracking URI
+tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
+mlflow.set_tracking_uri(tracking_uri)
 
 # Get the run data
 run = mlflow.get_run(run_id)
