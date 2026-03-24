@@ -1,0 +1,67 @@
+name: ML Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pandas scikit-learn mlflow joblib dvc
+
+      - name: Pull dataset
+        run: python -m dvc pull
+
+      - name: Train model
+        run: python train.py
+
+      - name: Save Run ID
+        run: |
+          python -c "import mlflow; f=open('model_info.txt','w'); f.write(mlflow.last_active_run().info.run_id); f.close()"
+
+      - name: Upload model info
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-info
+          path: model_info.txt
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install mlflow
+
+      - name: Download model info
+        uses: actions/download-artifact@v4
+        with:
+          name: model-info
+          path: .
+
+      - name: Check model threshold
+        run: python check_threshold.py
+
+      - name: Mock Docker build
+        run: |
+          RUN_ID=$(cat model_info.txt)
+          echo "Building Docker image for Run ID: $RUN_ID"
