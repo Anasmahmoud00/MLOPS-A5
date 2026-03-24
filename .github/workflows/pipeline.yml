@@ -25,13 +25,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Pull data from DVC
-        env:
-          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }} # Example if using GDrive
-        run: |
-          # Assuming DVC is configured with a remote. If not, this might fail in a real environment.
-          # For the sake of the assignment, we skip if no remote is configured.
-          dvc pull --force || echo "DVC pull skipped or failed (no remote configured)"
+      - name: Skip DVC pull
+        run: echo "Data is already in Git, skipping DVC pull."
 
       - name: Train model
         env:
