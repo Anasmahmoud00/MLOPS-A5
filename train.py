@@ -7,7 +7,7 @@ import mlflow
 import mlflow.sklearn
 from sklearn.metrics import accuracy_score
 
-mlflow.set_tracking_uri("file:///C:/Users/Rihana Nasr/Desktop/MLOPS-A5/mlruns")
+mlflow.set_tracking_uri("mlruns")
 mlflow.set_experiment("Iris_Classification")
 
 data = pd.read_csv("iris.csv")
